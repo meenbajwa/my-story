@@ -41,14 +41,22 @@ document.addEventListener('DOMContentLoaded', () => {
     const nextBtn = document.querySelector('.slider-side-btn.next-btn');
 
     if (slider && prevBtn && nextBtn) {
-        const scrollAmount = () => slider.clientWidth / 3;
+        const scrollAmount = () => slider.clientWidth / 2;
 
         prevBtn.addEventListener('click', () => {
-            slider.scrollBy({ left: -scrollAmount(), behavior: 'smooth' });
+            if (slider.scrollLeft <= 10) {
+                slider.scrollTo({ left: slider.scrollWidth, behavior: 'smooth' });
+            } else {
+                slider.scrollBy({ left: -scrollAmount(), behavior: 'smooth' });
+            }
         });
 
         nextBtn.addEventListener('click', () => {
-            slider.scrollBy({ left: scrollAmount(), behavior: 'smooth' });
+            if (slider.scrollLeft + slider.clientWidth >= slider.scrollWidth - 10) {
+                slider.scrollTo({ left: 0, behavior: 'smooth' });
+            } else {
+                slider.scrollBy({ left: scrollAmount(), behavior: 'smooth' });
+            }
         });
     }
 
