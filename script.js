@@ -58,6 +58,43 @@ document.addEventListener('DOMContentLoaded', () => {
                 slider.scrollBy({ left: scrollAmount(), behavior: 'smooth' });
             }
         });
+
+        // Hover to scroll continuous logic
+        let scrollInterval;
+        const startScrolling = (direction) => {
+            clearInterval(scrollInterval);
+            // Disable snapping and smooth behavior for pixel-perfect hover scrolling
+            slider.style.scrollSnapType = 'none';
+            slider.style.scrollBehavior = 'auto';
+            
+            scrollInterval = setInterval(() => {
+                if (direction === 'left') {
+                    if (slider.scrollLeft <= 0) {
+                        slider.scrollLeft = slider.scrollWidth;
+                    } else {
+                        slider.scrollLeft -= 3; // Slightly faster for responsiveness
+                    }
+                } else {
+                    if (slider.scrollLeft + slider.clientWidth >= slider.scrollWidth - 1) {
+                        slider.scrollLeft = 0;
+                    } else {
+                        slider.scrollLeft += 3;
+                    }
+                }
+            }, 10);
+        };
+
+        const stopScrolling = () => {
+            clearInterval(scrollInterval);
+            // Re-enable snapping and smooth behavior
+            slider.style.scrollSnapType = 'x mandatory';
+            slider.style.scrollBehavior = 'smooth';
+        };
+
+        prevBtn.addEventListener('mouseenter', () => startScrolling('left'));
+        prevBtn.addEventListener('mouseleave', stopScrolling);
+        nextBtn.addEventListener('mouseenter', () => startScrolling('right'));
+        nextBtn.addEventListener('mouseleave', stopScrolling);
     }
 
     // Back to Top Button
