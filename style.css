@@ -170,7 +170,7 @@ a {
     transition: var(--transition-smooth);
     z-index: 1000;
     border: none;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
 
 .back-to-top.visible {
@@ -550,7 +550,8 @@ a {
     height: auto;
     display: block;
     object-fit: cover;
-    aspect-ratio: 3/2; /* Shorter aspect ratio for smaller appearance */
+    aspect-ratio: 3/2;
+    /* Shorter aspect ratio for smaller appearance */
 }
 
 .project-content-container {
