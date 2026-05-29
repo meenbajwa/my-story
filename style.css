@@ -858,6 +858,10 @@ footer {
         --section-padding: 3rem 0;
     }
 
+    .greeting {
+        margin-top: 0.5rem;
+    }
+
     .headline {
         font-size: 2.0rem;
     }
