@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     window.addEventListener('scroll', () => {
         if (window.scrollY > 50) {
-            navbar.classList.add('scrolled');
+            navbar.classList.add('scrolleds');
         } else {
             navbar.classList.add('scrolled');
             // Actually, keep it scrolled for a moment if we want, or just remove it:
