@@ -745,6 +745,11 @@ a {
     color: #fff;
 }
 
+.beyond-tile.show-text .beyond-tile-overlay {
+  opacity: 1;
+  transform: translateY(0);
+}
+
 
 /* ==========================================================================
    Contact Section & Footer
