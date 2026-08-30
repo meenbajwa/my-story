@@ -59,7 +59,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
-        // Infinite-loop auto-scroll + auto-reveal text for "Beyond the Code" slider
+        // Infinite-loop auto-scroll for "Beyond the Code" slider — never pauses, ever
 (function () {
   const track = document.getElementById('beyondSlider');
   if (!track) return;
@@ -67,12 +67,14 @@ document.addEventListener('DOMContentLoaded', () => {
   const tiles = Array.from(track.querySelectorAll('.beyond-tile'));
   if (tiles.length === 0) return;
 
+  // Clone the first tile and append it so the loop can jump seamlessly
+  // instead of visibly reversing direction at the end.
   const firstClone = tiles[0].cloneNode(true);
   firstClone.classList.add('beyond-tile-clone');
   track.appendChild(firstClone);
 
-  const intervalMs = 1000;   // shorter timer between auto-advances
-  const textDelayMs = 400;   // how long to wait before showing the text on a tile
+  const intervalMs = 1800; // time between auto-advances
+  const textDelayMs = 700; // delay before showing text on the active tile
   let autoScrollTimer;
   let textTimer;
   let isJumping = false;
@@ -92,7 +94,6 @@ document.addEventListener('DOMContentLoaded', () => {
     track.scrollBy({ left: getTileWidth(), behavior: 'smooth' });
   }
 
-  // Detect when scrolling has settled, and handle the loop-back + text reveal
   let scrollEndTimer;
   track.addEventListener('scroll', () => {
     clearTimeout(scrollEndTimer);
@@ -101,7 +102,6 @@ document.addEventListener('DOMContentLoaded', () => {
       const idx = Math.round(track.scrollLeft / tileWidth);
 
       if (idx >= tiles.length) {
-        // Landed on the clone — jump back to the real first tile, instantly
         isJumping = true;
         track.style.scrollBehavior = 'auto';
         track.scrollLeft = 0;
@@ -113,16 +113,18 @@ document.addEventListener('DOMContentLoaded', () => {
       } else {
         showTextFor(tiles[idx] || tiles[0]);
       }
-    }, 100);
+    }, 150);
   }, { passive: true });
 
-  function startAutoScroll() {
-    clearInterval(autoScrollTimer);
-    autoScrollTimer = setInterval(scrollToNext, intervalMs);
-  }
+  // Runs forever on a fixed interval — no mouseenter/mouseleave listeners
+  // anywhere, so hovering the track OR the arrow buttons does not pause it.
+  autoScrollTimer = setInterval(scrollToNext, intervalMs);
 
-  startAutoScroll();
-  showTextFor(tiles[0]); // show text on the first tile immediately on load
+  showTextFor(tiles[0]);
+
+  // If your prev/next buttons already have click handlers elsewhere in this
+  // file, they'll still work — clicking just adds an extra scroll on top of
+  // the auto-scroll, it won't stop the timer.
 })();
 
         // Hover to scroll continuous logic
