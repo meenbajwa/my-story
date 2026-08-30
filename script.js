@@ -59,6 +59,38 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
+        // Auto-scroll the "Beyond the Code" slider
+(function () {
+  const track = document.getElementById('beyondSlider');
+  if (!track) return;
+
+  const intervalMs = 3000;
+  let autoScrollTimer;
+
+  function getTileWidth() {
+    const firstTile = track.querySelector('.beyond-tile');
+    return firstTile ? firstTile.getBoundingClientRect().width : track.clientWidth;
+  }
+
+  function scrollToNext() {
+    const tileWidth = getTileWidth();
+    const maxScroll = track.scrollWidth - track.clientWidth;
+
+    if (track.scrollLeft >= maxScroll - 5) {
+      track.scrollTo({ left: 0, behavior: 'smooth' });
+    } else {
+      track.scrollBy({ left: tileWidth, behavior: 'smooth' });
+    }
+  }
+
+  function startAutoScroll() {
+    clearInterval(autoScrollTimer);
+    autoScrollTimer = setInterval(scrollToNext, intervalMs);
+  }
+
+  startAutoScroll();
+})();
+
         // Hover to scroll continuous logic
         let scrollInterval;
         const startScrolling = (direction) => {
