@@ -59,29 +59,65 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
-        // Auto-scroll the "Beyond the Code" slider
+        // Infinite-loop auto-scroll + auto-reveal text for "Beyond the Code" slider
 (function () {
   const track = document.getElementById('beyondSlider');
   if (!track) return;
 
-  const intervalMs = 3000;
+  const tiles = Array.from(track.querySelectorAll('.beyond-tile'));
+  if (tiles.length === 0) return;
+
+  // Clone the first tile and append it — this is what makes the loop seamless.
+  // We scroll forward onto the clone, then silently snap back to the real
+  // first tile with no animation, so it looks like it never stopped moving.
+  const firstClone = tiles[0].cloneNode(true);
+  firstClone.classList.add('beyond-tile-clone');
+  track.appendChild(firstClone);
+
+  const intervalMs = 1800;   // shorter timer between auto-advances
+  const textDelayMs = 700;   // how long to wait before showing the text on a tile
   let autoScrollTimer;
+  let textTimer;
+  let isJumping = false;
 
   function getTileWidth() {
-    const firstTile = track.querySelector('.beyond-tile');
-    return firstTile ? firstTile.getBoundingClientRect().width : track.clientWidth;
+    return tiles[0].getBoundingClientRect().width;
+  }
+
+  function showTextFor(tile) {
+    tiles.forEach(t => t.classList.remove('show-text'));
+    clearTimeout(textTimer);
+    textTimer = setTimeout(() => tile.classList.add('show-text'), textDelayMs);
   }
 
   function scrollToNext() {
-    const tileWidth = getTileWidth();
-    const maxScroll = track.scrollWidth - track.clientWidth;
-
-    if (track.scrollLeft >= maxScroll - 5) {
-      track.scrollTo({ left: 0, behavior: 'smooth' });
-    } else {
-      track.scrollBy({ left: tileWidth, behavior: 'smooth' });
-    }
+    if (isJumping) return;
+    track.scrollBy({ left: getTileWidth(), behavior: 'smooth' });
   }
+
+  // Detect when scrolling has settled, and handle the loop-back + text reveal
+  let scrollEndTimer;
+  track.addEventListener('scroll', () => {
+    clearTimeout(scrollEndTimer);
+    scrollEndTimer = setTimeout(() => {
+      const tileWidth = getTileWidth();
+      const idx = Math.round(track.scrollLeft / tileWidth);
+
+      if (idx >= tiles.length) {
+        // Landed on the clone — jump back to the real first tile, instantly
+        isJumping = true;
+        track.style.scrollBehavior = 'auto';
+        track.scrollLeft = 0;
+        requestAnimationFrame(() => {
+          track.style.scrollBehavior = 'smooth';
+          isJumping = false;
+        });
+        showTextFor(tiles[0]);
+      } else {
+        showTextFor(tiles[idx] || tiles[0]);
+      }
+    }, 150);
+  }, { passive: true });
 
   function startAutoScroll() {
     clearInterval(autoScrollTimer);
@@ -89,6 +125,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   startAutoScroll();
+  showTextFor(tiles[0]); // show text on the first tile immediately on load
 })();
 
         // Hover to scroll continuous logic
