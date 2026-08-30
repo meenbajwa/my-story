@@ -67,15 +67,12 @@ document.addEventListener('DOMContentLoaded', () => {
   const tiles = Array.from(track.querySelectorAll('.beyond-tile'));
   if (tiles.length === 0) return;
 
-  // Clone the first tile and append it — this is what makes the loop seamless.
-  // We scroll forward onto the clone, then silently snap back to the real
-  // first tile with no animation, so it looks like it never stopped moving.
   const firstClone = tiles[0].cloneNode(true);
   firstClone.classList.add('beyond-tile-clone');
   track.appendChild(firstClone);
 
-  const intervalMs = 1800;   // shorter timer between auto-advances
-  const textDelayMs = 700;   // how long to wait before showing the text on a tile
+  const intervalMs = 1000;   // shorter timer between auto-advances
+  const textDelayMs = 400;   // how long to wait before showing the text on a tile
   let autoScrollTimer;
   let textTimer;
   let isJumping = false;
@@ -116,7 +113,7 @@ document.addEventListener('DOMContentLoaded', () => {
       } else {
         showTextFor(tiles[idx] || tiles[0]);
       }
-    }, 150);
+    }, 100);
   }, { passive: true });
 
   function startAutoScroll() {
